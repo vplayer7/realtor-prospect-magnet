@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS leads (
     INDEX idx_price_range (price_range)
 );
 
--- Admin users table (for future admin panel)
+-- Admin users table
 CREATE TABLE IF NOT EXISTS admin_users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(100) UNIQUE NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS admin_users (
     is_active BOOLEAN DEFAULT TRUE
 );
 
--- Settings table (for configurable options)
+-- Settings table for configurable options
 CREATE TABLE IF NOT EXISTS settings (
     id INT AUTO_INCREMENT PRIMARY KEY,
     setting_key VARCHAR(100) UNIQUE NOT NULL,
@@ -61,7 +61,8 @@ INSERT INTO settings (setting_key, setting_value, description) VALUES
 ('success_message', 'Thank you! Your information has been submitted successfully.', 'Success message after form submission')
 ON DUPLICATE KEY UPDATE setting_value = VALUES(setting_value);
 
--- Sample data (optional - remove in production)
--- INSERT INTO leads (name, email, phone, address, property_type, bedrooms, bathrooms, price_range, timeline, financing) VALUES
--- ('John Doe', 'john@example.com', '555-1234', '123 Main St, Anytown, USA', 'single-family', '3', '2', '300k-500k', '1-3-months', 'mortgage'),
--- ('Jane Smith', 'jane@example.com', '555-5678', '456 Oak Ave, Somewhere, USA', 'condo', '2', '2', 'under-300k', 'immediately', 'pre-approved');
+-- Insert default admin user (username: admin, password: admin123)
+-- Note: Change this password immediately after setup
+INSERT INTO admin_users (username, email, password_hash) VALUES
+('admin', 'admin@yourdomain.com', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi')
+ON DUPLICATE KEY UPDATE username = VALUES(username);

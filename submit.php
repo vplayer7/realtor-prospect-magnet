@@ -7,16 +7,11 @@ header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST');
 header('Access-Control-Allow-Headers: Content-Type');
 
-// Database configuration
-$host = 'localhost';
-$dbname = 'real_estate_leads';
-$username = 'your_db_username';
-$password = 'your_db_password';
+require_once 'config.php';
 
 try {
     // Create PDO connection
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = getDBConnection();
     
     // Get JSON data
     $json = file_get_contents('php://input');
@@ -67,8 +62,8 @@ try {
     // Get the inserted ID
     $leadId = $pdo->lastInsertId();
     
-    // Send email notification (optional)
-    sendEmailNotification($data);
+    // Send email notification
+    sendEmailNotification($data, $pdo);
     
     // Return success response
     echo json_encode([
@@ -86,28 +81,37 @@ try {
     ]);
 }
 
-function sendEmailNotification($data) {
-    // Configure your email settings here
-    $to = 'admin@yourdomain.com'; // Your email address
-    $subject = 'New Real Estate Lead Captured';
-    
-    $message = "New lead captured:\n\n";
-    $message .= "Name: " . $data['name'] . "\n";
-    $message .= "Email: " . $data['email'] . "\n";
-    $message .= "Phone: " . $data['phone'] . "\n";
-    $message .= "Address: " . $data['address'] . "\n";
-    $message .= "Property Type: " . ($data['propertyType'] ?? 'Not specified') . "\n";
-    $message .= "Bedrooms: " . ($data['bedrooms'] ?? 'Not specified') . "\n";
-    $message .= "Bathrooms: " . ($data['bathrooms'] ?? 'Not specified') . "\n";
-    $message .= "Price Range: " . ($data['priceRange'] ?? 'Not specified') . "\n";
-    $message .= "Timeline: " . ($data['timeline'] ?? 'Not specified') . "\n";
-    $message .= "Financing: " . ($data['financing'] ?? 'Not specified') . "\n";
-    
-    $headers = 'From: noreply@yourdomain.com' . "\r\n" .
-               'Reply-To: noreply@yourdomain.com' . "\r\n" .
-               'X-Mailer: PHP/' . phpversion();
-    
-    // Send email
-    mail($to, $subject, $message, $headers);
+function sendEmailNotification($data, $pdo) {
+    try {
+        // Get admin email from settings
+        $stmt = $pdo->prepare("SELECT setting_value FROM settings WHERE setting_key = 'admin_email'");
+        $stmt->execute();
+        $admin_email = $stmt->fetchColumn() ?: 'admin@yourdomain.com';
+        
+        $to = $admin_email;
+        $subject = 'New Real Estate Lead Captured';
+        
+        $message = "New lead captured:\n\n";
+        $message .= "Name: " . $data['name'] . "\n";
+        $message .= "Email: " . $data['email'] . "\n";
+        $message .= "Phone: " . $data['phone'] . "\n";
+        $message .= "Address: " . $data['address'] . "\n";
+        $message .= "Property Type: " . ($data['propertyType'] ?? 'Not specified') . "\n";
+        $message .= "Bedrooms: " . ($data['bedrooms'] ?? 'Not specified') . "\n";
+        $message .= "Bathrooms: " . ($data['bathrooms'] ?? 'Not specified') . "\n";
+        $message .= "Price Range: " . ($data['priceRange'] ?? 'Not specified') . "\n";
+        $message .= "Timeline: " . ($data['timeline'] ?? 'Not specified') . "\n";
+        $message .= "Financing: " . ($data['financing'] ?? 'Not specified') . "\n";
+        
+        $headers = 'From: noreply@yourdomain.com' . "\r\n" .
+                   'Reply-To: noreply@yourdomain.com' . "\r\n" .
+                   'X-Mailer: PHP/' . phpversion();
+        
+        // Send email
+        mail($to, $subject, $message, $headers);
+    } catch (Exception $e) {
+        // Email sending failed, but don't break the lead capture
+        error_log('Email notification failed: ' . $e->getMessage());
+    }
 }
 ?>
