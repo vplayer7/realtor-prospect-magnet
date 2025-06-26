@@ -212,8 +212,37 @@
         </div>
     </div>
 
-    <!-- Google Maps API -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initializeApp" async defer></script>
+    <!-- Load Google Maps API dynamically -->
+    <script>
+        // Load Google Maps API with the key from settings
+        fetch('get_content.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success && data.settings.google_maps_api_key) {
+                    const script = document.createElement('script');
+                    script.src = `https://maps.googleapis.com/maps/api/js?key=${data.settings.google_maps_api_key}&libraries=places&callback=initializeApp`;
+                    script.async = true;
+                    script.defer = true;
+                    document.head.appendChild(script);
+                } else {
+                    // Fallback to default key
+                    const script = document.createElement('script');
+                    script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initializeApp';
+                    script.async = true;
+                    script.defer = true;
+                    document.head.appendChild(script);
+                }
+            })
+            .catch(error => {
+                console.error('Error loading API key:', error);
+                // Fallback to default key
+                const script = document.createElement('script');
+                script.src = 'https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initializeApp';
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+            });
+    </script>
     <script src="script.js"></script>
 </body>
 </html>

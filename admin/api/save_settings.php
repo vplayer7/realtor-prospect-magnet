@@ -26,6 +26,44 @@ try {
         }
     }
     
+    // Update quiz questions
+    $stmt = $pdo->query("SELECT question_id FROM quiz_questions WHERE is_active = 1");
+    $question_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+    foreach ($question_ids as $question_id) {
+        $title_key = "question_title_" . $question_id;
+        $icon_key = "question_icon_" . $question_id;
+        
+        if (isset($_POST[$title_key])) {
+            $stmt = $pdo->prepare("UPDATE quiz_questions SET title = ?, updated_at = NOW() WHERE question_id = ?");
+            $stmt->execute([sanitizeInput($_POST[$title_key]), $question_id]);
+        }
+        
+        if (isset($_POST[$icon_key])) {
+            $stmt = $pdo->prepare("UPDATE quiz_questions SET icon = ?, updated_at = NOW() WHERE question_id = ?");
+            $stmt->execute([sanitizeInput($_POST[$icon_key]), $question_id]);
+        }
+    }
+    
+    // Update quiz options
+    $stmt = $pdo->query("SELECT id FROM quiz_options WHERE is_active = 1");
+    $option_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+    foreach ($option_ids as $option_id) {
+        $value_key = "option_value_" . $option_id;
+        $label_key = "option_label_" . $option_id;
+        
+        if (isset($_POST[$value_key])) {
+            $stmt = $pdo->prepare("UPDATE quiz_options SET option_value = ? WHERE id = ?");
+            $stmt->execute([sanitizeInput($_POST[$value_key]), $option_id]);
+        }
+        
+        if (isset($_POST[$label_key])) {
+            $stmt = $pdo->prepare("UPDATE quiz_options SET option_label = ? WHERE id = ?");
+            $stmt->execute([sanitizeInput($_POST[$label_key]), $option_id]);
+        }
+    }
+    
     echo json_encode(['success' => true, 'message' => 'Settings updated successfully']);
     
 } catch (Exception $e) {
