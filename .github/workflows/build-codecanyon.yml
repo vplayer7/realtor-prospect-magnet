@@ -1,0 +1,38 @@
+
+name: Build CodeCanyon Package
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+        cache: 'npm'
+        
+    - name: Install dependencies
+      run: npm install
+      
+    - name: Make build script executable
+      run: chmod +x build-codecanyon.sh
+      
+    - name: Build CodeCanyon package
+      run: ./build-codecanyon.sh
+      
+    - name: Upload package as artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: codecanyon-package
+        path: real-estate-lead-capture-v2.0.zip
+        retention-days: 30
