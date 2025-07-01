@@ -387,4 +387,3 @@ else
     echo "❌ Failed to create ZIP package"
     exit 1
 fi
-EOF
