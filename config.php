@@ -1,21 +1,6 @@
+
 <?php
 // config.php - Configuration file for the real estate lead capture system
-
-// Check if system is installed
-if (!defined('INSTALLATION_COMPLETE')) {
-    // Redirect to installer if not installed
-    if (!file_exists(__DIR__ . '/install/index.php')) {
-        die('Installation files not found. Please upload the install folder.');
-    }
-    
-    $install_url = dirname($_SERVER['PHP_SELF']) . '/install/';
-    if (dirname($_SERVER['PHP_SELF']) === '/') {
-        $install_url = '/install/';
-    }
-    
-    header('Location: ' . $install_url);
-    exit;
-}
 
 // Database configuration
 define('DB_HOST', 'localhost');
@@ -93,5 +78,20 @@ function isValidEmail($email) {
 function isValidPhone($phone) {
     // Basic phone validation - adjust regex as needed
     return preg_match('/^[\+]?[1-9][\d]{0,15}$/', preg_replace('/[^\d+]/', '', $phone));
+}
+
+// Check if we should redirect to installer
+if (!defined('INSTALLATION_COMPLETE')) {
+    // Check if installation files exist
+    if (file_exists(__DIR__ . '/install/index.php')) {
+        $current_script = $_SERVER['SCRIPT_NAME'];
+        $install_path = '/install/';
+        
+        // Don't redirect if we're already in the install directory
+        if (strpos($current_script, '/install/') === false) {
+            header('Location: ' . $install_path);
+            exit;
+        }
+    }
 }
 ?>
