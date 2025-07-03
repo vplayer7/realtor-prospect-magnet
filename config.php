@@ -80,18 +80,6 @@ function isValidPhone($phone) {
     return preg_match('/^[\+]?[1-9][\d]{0,15}$/', preg_replace('/[^\d+]/', '', $phone));
 }
 
-// Check if we should redirect to installer
-if (!defined('INSTALLATION_COMPLETE')) {
-    // Check if installation files exist
-    if (file_exists(__DIR__ . '/install/index.php')) {
-        $current_script = $_SERVER['SCRIPT_NAME'];
-        $install_path = '/install/';
-        
-        // Don't redirect if we're already in the install directory
-        if (strpos($current_script, '/install/') === false) {
-            header('Location: ' . $install_path);
-            exit;
-        }
-    }
-}
+// Note: Installation status will be checked by looking for database tables
+// The installers will create a new config.php with INSTALLATION_COMPLETE when done
 ?>
