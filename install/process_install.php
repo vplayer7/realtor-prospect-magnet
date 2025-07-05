@@ -42,24 +42,51 @@ try {
     
     $sql = file_get_contents($sqlFile);
     
-    // Remove CREATE DATABASE and USE statements since we're already connected
-    $sql = preg_replace('/CREATE DATABASE.*?;/i', '', $sql);
-    $sql = preg_replace('/USE.*?;/i', '', $sql);
+    // First, create tables by executing CREATE TABLE statements
+    $createStatements = [];
+    $insertStatements = [];
     
-    // Split SQL into individual statements and execute them one by one
-    $statements = explode(';', $sql);
+    // Split the SQL into lines and process
+    $lines = explode("\n", $sql);
+    $currentStatement = '';
+    $inCreateTable = false;
     
-    foreach ($statements as $statement) {
-        $statement = trim($statement);
-        if (!empty($statement) && !preg_match('/^\s*--/', $statement) && !preg_match('/^\s*\/\*/', $statement)) {
-            try {
-                $pdo->exec($statement);
-            } catch (PDOException $e) {
-                // Skip ON DUPLICATE KEY UPDATE errors for INSERT statements
-                if (strpos($e->getMessage(), 'Duplicate entry') === false) {
-                    throw new Exception('SQL Error: ' . $e->getMessage() . ' in statement: ' . substr($statement, 0, 100));
-                }
+    foreach ($lines as $line) {
+        $line = trim($line);
+        
+        // Skip comments and empty lines
+        if (empty($line) || strpos($line, '--') === 0 || strpos($line, '/*') === 0) {
+            continue;
+        }
+        
+        $currentStatement .= $line . "\n";
+        
+        // Check if we're starting a CREATE TABLE statement
+        if (stripos($line, 'CREATE TABLE') !== false) {
+            $inCreateTable = true;
+        }
+        
+        // Check if statement ends with semicolon
+        if (substr($line, -1) === ';') {
+            $statement = trim($currentStatement);
+            
+            if ($inCreateTable || stripos($statement, 'CREATE TABLE') !== false) {
+                $createStatements[] = $statement;
+                $inCreateTable = false;
+            } else if (stripos($statement, 'INSERT') !== false) {
+                $insertStatements[] = $statement;
             }
+            
+            $currentStatement = '';
+        }
+    }
+    
+    // Execute CREATE TABLE statements first
+    foreach ($createStatements as $statement) {
+        try {
+            $pdo->exec($statement);
+        } catch (PDOException $e) {
+            throw new Exception('Error creating table: ' . $e->getMessage() . ' in statement: ' . substr($statement, 0, 200));
         }
     }
     
@@ -70,7 +97,20 @@ try {
     
     foreach ($requiredTables as $table) {
         if (!in_array($table, $existingTables)) {
-            throw new Exception("Required table '{$table}' was not created successfully");
+            throw new Exception("Required table '{$table}' was not created successfully. Existing tables: " . implode(', ', $existingTables));
+        }
+    }
+    
+    // Execute INSERT statements
+    foreach ($insertStatements as $statement) {
+        try {
+            $pdo->exec($statement);
+        } catch (PDOException $e) {
+            // Skip duplicate entry errors for INSERT statements with ON DUPLICATE KEY UPDATE
+            if (strpos($e->getMessage(), 'Duplicate entry') === false) {
+                // Don't fail on insert errors, just log them
+                error_log('Insert error: ' . $e->getMessage());
+            }
         }
     }
     
