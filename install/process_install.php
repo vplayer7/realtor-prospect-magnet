@@ -42,31 +42,57 @@ try {
     
     $sql = file_get_contents($sqlFile);
     
-    // Remove CREATE DATABASE statements and USE statements
+    // Remove CREATE DATABASE and USE statements since we're already connected
     $sql = preg_replace('/CREATE DATABASE.*?;/i', '', $sql);
     $sql = preg_replace('/USE.*?;/i', '', $sql);
     
-    // Split SQL into individual statements
-    $statements = array_filter(array_map('trim', explode(';', $sql)));
+    // Split SQL into individual statements and execute them one by one
+    $statements = explode(';', $sql);
     
     foreach ($statements as $statement) {
-        if (!empty($statement) && !preg_match('/^\s*--/', $statement)) {
-            $pdo->exec($statement);
+        $statement = trim($statement);
+        if (!empty($statement) && !preg_match('/^\s*--/', $statement) && !preg_match('/^\s*\/\*/', $statement)) {
+            try {
+                $pdo->exec($statement);
+            } catch (PDOException $e) {
+                // Skip ON DUPLICATE KEY UPDATE errors for INSERT statements
+                if (strpos($e->getMessage(), 'Duplicate entry') === false) {
+                    throw new Exception('SQL Error: ' . $e->getMessage() . ' in statement: ' . substr($statement, 0, 100));
+                }
+            }
+        }
+    }
+    
+    // Verify tables were created
+    $requiredTables = ['leads', 'admin_users', 'settings', 'quiz_questions', 'quiz_options'];
+    $stmt = $pdo->query("SHOW TABLES");
+    $existingTables = $stmt->fetchAll(PDO::FETCH_COLUMN);
+    
+    foreach ($requiredTables as $table) {
+        if (!in_array($table, $existingTables)) {
+            throw new Exception("Required table '{$table}' was not created successfully");
         }
     }
     
     // Update admin user with provided credentials
     $hashedPassword = password_hash($adminPass, PASSWORD_DEFAULT);
-    $stmt = $pdo->prepare("UPDATE admin_users SET username = ?, email = ?, password_hash = ? WHERE id = 1");
-    $stmt->execute([$adminUser, $adminEmail, $hashedPassword]);
     
-    // Update Google Maps API key if provided
+    // First, try to update existing admin user
+    $stmt = $pdo->prepare("UPDATE admin_users SET username = ?, email = ?, password_hash = ? WHERE id = 1");
+    $result = $stmt->execute([$adminUser, $adminEmail, $hashedPassword]);
+    
+    // If no rows were affected, insert new admin user
+    if ($stmt->rowCount() == 0) {
+        $stmt = $pdo->prepare("INSERT INTO admin_users (username, email, password_hash) VALUES (?, ?, ?)");
+        $stmt->execute([$adminUser, $adminEmail, $hashedPassword]);
+    }
+    
+    // Update settings
     if (!empty($googleApiKey)) {
         $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = 'google_maps_api_key'");
         $stmt->execute([$googleApiKey]);
     }
     
-    // Update admin email in settings
     $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = 'admin_email'");
     $stmt->execute([$adminEmail]);
     

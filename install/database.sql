@@ -1,9 +1,6 @@
 
 -- database.sql - Database schema for real estate lead capture
 
-CREATE DATABASE IF NOT EXISTS real_estate_leads;
-USE real_estate_leads;
-
 -- Leads table
 CREATE TABLE IF NOT EXISTS leads (
     id INT AUTO_INCREMENT PRIMARY KEY,
