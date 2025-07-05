@@ -42,11 +42,15 @@ try {
     
     $sql = file_get_contents($sqlFile);
     
+    // Remove CREATE DATABASE statements and USE statements
+    $sql = preg_replace('/CREATE DATABASE.*?;/i', '', $sql);
+    $sql = preg_replace('/USE.*?;/i', '', $sql);
+    
     // Split SQL into individual statements
     $statements = array_filter(array_map('trim', explode(';', $sql)));
     
     foreach ($statements as $statement) {
-        if (!empty($statement)) {
+        if (!empty($statement) && !preg_match('/^\s*--/', $statement)) {
             $pdo->exec($statement);
         }
     }
@@ -61,6 +65,10 @@ try {
         $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = 'google_maps_api_key'");
         $stmt->execute([$googleApiKey]);
     }
+    
+    // Update admin email in settings
+    $stmt = $pdo->prepare("UPDATE settings SET setting_value = ? WHERE setting_key = 'admin_email'");
+    $stmt->execute([$adminEmail]);
     
     // Create config.php file
     $configContent = "<?php

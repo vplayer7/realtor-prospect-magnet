@@ -61,22 +61,7 @@ if (function_exists('mail')) {
     $requirements[] = [
         'name' => 'Mail Function',
         'status' => 'error',
-        'message' => 'Not available - Required for email notifications'
-    ];
-}
-
-// Check session support
-if (function_exists('session_start')) {
-    $requirements[] = [
-        'name' => 'Session Support',
-        'status' => 'success',
-        'message' => 'Available'
-    ];
-} else {
-    $requirements[] = [
-        'name' => 'Session Support',
-        'status' => 'error',
-        'message' => 'Not available - Required for admin authentication'
+        'message' => 'Not available - Required for notifications'
     ];
 }
 

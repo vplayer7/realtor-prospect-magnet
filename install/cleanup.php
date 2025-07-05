@@ -23,13 +23,16 @@ function deleteDirectory($dir) {
 
 try {
     // Check if installation is complete
-    if (!file_exists('../config.php')) {
-        throw new Exception('Installation not complete');
-    }
-    
-    $configContent = file_get_contents('../config.php');
-    if (strpos($configContent, 'INSTALLATION_COMPLETE') === false) {
-        throw new Exception('Installation not complete');
+    if (!defined('INSTALLATION_COMPLETE')) {
+        // Try to load config to check
+        if (file_exists('../config.php')) {
+            $configContent = file_get_contents('../config.php');
+            if (strpos($configContent, 'INSTALLATION_COMPLETE') === false) {
+                throw new Exception('Installation not complete');
+            }
+        } else {
+            throw new Exception('Installation not complete');
+        }
     }
     
     // Delete install directory

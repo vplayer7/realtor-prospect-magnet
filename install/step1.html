@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Step 1 - Requirements Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .requirement {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .status {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .status.success { background: #28a745; }
+        .status.error { background: #dc3545; }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Real Estate Lead Magnet</h1>
+        <h2>Step 1: System Requirements</h2>
+        
+        <div id="requirements"></div>
+        <div id="message"></div>
+        
+        <button class="btn" onclick="checkRequirements()">Check Requirements</button>
+        <button class="btn" onclick="location.href='step2.html'" id="nextBtn" style="display: none;">Continue to Database Setup</button>
+    </div>
+
+    <script>
+        function checkRequirements() {
+            fetch('check_requirements.php')
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('requirements');
+                    container.innerHTML = '';
+                    
+                    let allPassed = true;
+                    data.requirements.forEach(req => {
+                        const div = document.createElement('div');
+                        div.className = 'requirement';
+                        div.innerHTML = `
+                            <div class="status ${req.status}">${req.status === 'success' ? '✓' : '✗'}</div>
+                            <span><strong>${req.name}:</strong> ${req.message}</span>
+                        `;
+                        container.appendChild(div);
+                        
+                        if (req.status !== 'success') allPassed = false;
+                    });
+                    
+                    const message = document.getElementById('message');
+                    if (allPassed) {
+                        message.innerHTML = '<div class="alert alert-success">All requirements met! You can proceed.</div>';
+                        document.getElementById('nextBtn').style.display = 'block';
+                    } else {
+                        message.innerHTML = '<div class="alert alert-error">Some requirements are not met. Please fix them before continuing.</div>';
+                    }
+                });
+        }
+        
+        // Auto-check on load
+        checkRequirements();
+    </script>
+</body>
+</html>

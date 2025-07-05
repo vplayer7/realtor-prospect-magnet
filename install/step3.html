@@ -1,0 +1,157 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Installation Step 3 - Admin Setup</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .alert {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏠 Real Estate Lead Magnet</h1>
+        <h2>Step 3: Admin Account Setup</h2>
+        
+        <form id="adminForm">
+            <div class="form-group">
+                <label for="admin_user">Admin Username</label>
+                <input type="text" id="admin_user" name="admin_user" value="admin" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="admin_email">Admin Email</label>
+                <input type="email" id="admin_email" name="admin_email" placeholder="Enter admin email" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="admin_pass">Admin Password</label>
+                <input type="password" id="admin_pass" name="admin_pass" placeholder="Enter secure password" required minlength="6">
+            </div>
+            
+            <div class="form-group">
+                <label for="google_api_key">Google Maps API Key (Optional)</label>
+                <input type="text" id="google_api_key" name="google_api_key" placeholder="Enter Google Maps API key">
+            </div>
+        </form>
+        
+        <div id="message"></div>
+        
+        <button class="btn" onclick="installSystem()">Install System</button>
+        <button class="btn btn-secondary" onclick="location.href='step2.html'">Back</button>
+    </div>
+
+    <script>
+        function installSystem() {
+            const dbConfig = JSON.parse(localStorage.getItem('dbConfig') || '{}');
+            const adminForm = new FormData(document.getElementById('adminForm'));
+            
+            // Combine database and admin data
+            const formData = new FormData();
+            formData.append('db_host', dbConfig.host);
+            formData.append('db_name', dbConfig.name);
+            formData.append('db_user', dbConfig.user);
+            formData.append('db_pass', dbConfig.pass);
+            
+            for (let [key, value] of adminForm) {
+                formData.append(key, value);
+            }
+            
+            fetch('process_install.php', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const message = document.getElementById('message');
+                if (data.success) {
+                    location.href = 'step4.html';
+                } else {
+                    message.innerHTML = '<div class="alert alert-error">Installation failed: ' + data.message + '</div>';
+                }
+            });
+        }
+    </script>
+</body>
+</html>
