@@ -262,6 +262,12 @@ try {
     </div>
 </div>
 
+<!-- Success notification div -->
+<div id="notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
+    <i class="fas fa-check-circle mr-2"></i>
+    <span id="notification-message">Settings saved successfully!</span>
+</div>
+
 <script>
 function toggleQuestionOptions(questionId) {
     const optionsDiv = document.getElementById('question-options-' + questionId);
@@ -272,45 +278,32 @@ function toggleQuestionOptions(questionId) {
     }
 }
 
+function showNotification(message, isSuccess = true) {
+    const notification = document.getElementById('notification');
+    const messageSpan = document.getElementById('notification-message');
+    
+    messageSpan.textContent = message;
+    notification.className = isSuccess 
+        ? 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg'
+        : 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
+    
+    notification.classList.remove('hidden');
+    
+    setTimeout(() => {
+        notification.classList.add('hidden');
+    }, 3000);
+}
+
 function saveSettings() {
     const formData = new FormData();
     
-    // Collect all form data
-    <?php foreach ($settings as $setting): ?>
-    const <?php echo $setting['setting_key']; ?>_element = document.getElementById('<?php echo $setting['setting_key']; ?>');
-    if (<?php echo $setting['setting_key']; ?>_element) {
-        formData.append('<?php echo $setting['setting_key']; ?>', <?php echo $setting['setting_key']; ?>_element.value);
-    }
-    <?php endforeach; ?>
-    
-    // Collect quiz question data
-    <?php foreach ($questions as $question): ?>
-    const questionTitle_<?php echo $question['question_id']; ?> = document.querySelector('input[name="question_title_<?php echo $question['question_id']; ?>"]');
-    const questionIcon_<?php echo $question['question_id']; ?> = document.querySelector('input[name="question_icon_<?php echo $question['question_id']; ?>"]');
-    if (questionTitle_<?php echo $question['question_id']; ?>) {
-        formData.append('question_title_<?php echo $question['question_id']; ?>', questionTitle_<?php echo $question['question_id']; ?>.value);
-    }
-    if (questionIcon_<?php echo $question['question_id']; ?>) {
-        formData.append('question_icon_<?php echo $question['question_id']; ?>', questionIcon_<?php echo $question['question_id']; ?>.value);
-    }
-    
-    // Collect options for this question
-    <?php
-    $stmt = $pdo->prepare("SELECT * FROM quiz_options WHERE question_id = ? AND is_active = 1 ORDER BY option_order");
-    $stmt->execute([$question['question_id']]);
-    $options = $stmt->fetchAll();
-    foreach ($options as $option):
-    ?>
-    const optionValue_<?php echo $option['id']; ?> = document.querySelector('input[name="option_value_<?php echo $option['id']; ?>"]');
-    const optionLabel_<?php echo $option['id']; ?> = document.querySelector('input[name="option_label_<?php echo $option['id']; ?>"]');
-    if (optionValue_<?php echo $option['id']; ?>) {
-        formData.append('option_value_<?php echo $option['id']; ?>', optionValue_<?php echo $option['id']; ?>.value);
-    }
-    if (optionLabel_<?php echo $option['id']; ?>) {
-        formData.append('option_label_<?php echo $option['id']; ?>', optionLabel_<?php echo $option['id']; ?>.value);
-    }
-    <?php endforeach; ?>
-    <?php endforeach; ?>
+    // Collect all form inputs by their name attribute
+    const inputs = document.querySelectorAll('input[name], textarea[name]');
+    inputs.forEach(input => {
+        if (input.name) {
+            formData.append(input.name, input.value);
+        }
+    });
     
     fetch('api/save_settings.php', {
         method: 'POST',
@@ -319,14 +312,14 @@ function saveSettings() {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            alert('Settings saved successfully!');
+            showNotification('Settings saved successfully!', true);
         } else {
-            alert('Error saving settings: ' + data.message);
+            showNotification('Error saving settings: ' + data.message, false);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        alert('Error saving settings');
+        showNotification('Error saving settings', false);
     });
 }
 </script>

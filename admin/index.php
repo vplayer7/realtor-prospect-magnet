@@ -44,6 +44,9 @@ try {
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-xl font-bold">Real Estate Lead Capture Admin</h1>
             <div class="flex items-center space-x-4">
+                <a href="../index.html" target="_blank" class="bg-green-500 hover:bg-green-700 px-3 py-1 rounded flex items-center">
+                    <i class="fas fa-external-link-alt mr-2"></i>View Site
+                </a>
                 <span>Welcome, <?php echo htmlspecialchars($_SESSION['admin_username']); ?></span>
                 <a href="logout.php" class="bg-red-500 hover:bg-red-700 px-3 py-1 rounded">Logout</a>
             </div>
