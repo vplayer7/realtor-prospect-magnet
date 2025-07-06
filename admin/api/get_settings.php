@@ -42,7 +42,7 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -64,7 +64,7 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <input type="url" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -85,7 +85,7 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -99,7 +99,7 @@ try {
             <div class="quiz-question-item bg-white p-4 rounded border mb-4">
                 <div class="flex justify-between items-center mb-3">
                     <h5 class="font-medium">Question <?php echo $index + 1; ?></h5>
-                    <button type="button" onclick="toggleQuestionOptions(<?php echo $question['question_id']; ?>)" class="text-blue-600 hover:text-blue-800">
+                    <button type="button" class="configure-btn text-blue-600 hover:text-blue-800" data-question-id="<?php echo $question['question_id']; ?>">
                         <i class="fas fa-cog"></i> Configure
                     </button>
                 </div>
@@ -109,13 +109,13 @@ try {
                         <label class="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
                         <input type="text" name="question_title_<?php echo $question['question_id']; ?>" 
                                value="<?php echo htmlspecialchars($question['title']); ?>"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Icon Class</label>
                         <input type="text" name="question_icon_<?php echo $question['question_id']; ?>" 
                                value="<?php echo htmlspecialchars($question['icon']); ?>"
-                               class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                 </div>
                 
@@ -130,10 +130,10 @@ try {
                     <div class="flex gap-2 mb-2">
                         <input type="text" name="option_value_<?php echo $option['id']; ?>" 
                                value="<?php echo htmlspecialchars($option['option_value']); ?>"
-                               placeholder="Value" class="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               placeholder="Value" class="settings-input flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                         <input type="text" name="option_label_<?php echo $option['id']; ?>" 
                                value="<?php echo htmlspecialchars($option['option_label']); ?>"
-                               placeholder="Label" class="flex-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               placeholder="Label" class="settings-input flex-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -156,7 +156,7 @@ try {
                 </label>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -177,11 +177,11 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <?php if (in_array($setting['setting_key'], ['privacy_text'])): ?>
                 <textarea id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" rows="3" 
-                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
+                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
                 <?php else: ?>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <?php endif; ?>
             </div>
             <?php endif; endforeach; ?>
@@ -190,7 +190,7 @@ try {
 
     <!-- Step 4 Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Step 4 - Results Page</h4>
+        <h4 class="text-lg font-semibled mb-4">Step 4 - Results Page</h4>
         <div class="space-y-6">
             <?php 
             foreach ($settings as $setting): 
@@ -202,7 +202,7 @@ try {
                 </label>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -223,11 +223,11 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <?php if (in_array($setting['setting_key'], ['success_message'])): ?>
                 <textarea id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" rows="2" 
-                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
+                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
                 <?php else: ?>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
                 <?php endif; ?>
             </div>
             <?php endif; endforeach; ?>
@@ -249,14 +249,14 @@ try {
                 </label>
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <textarea id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" rows="3" 
-                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
+                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
             </div>
             <?php endif; endforeach; ?>
         </div>
     </div>
     
     <div class="pt-4">
-        <button type="button" onclick="saveSettings()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+        <button type="button" id="save-settings-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
             <i class="fas fa-save mr-2"></i>Save Settings
         </button>
     </div>
@@ -269,14 +269,40 @@ try {
 </div>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Settings page loaded');
+    
+    // Add event listeners for configure buttons
+    document.querySelectorAll('.configure-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            const questionId = this.getAttribute('data-question-id');
+            console.log('Configure button clicked for question:', questionId);
+            toggleQuestionOptions(questionId);
+        });
+    });
+    
+    // Add event listener for save button
+    const saveBtn = document.getElementById('save-settings-btn');
+    if (saveBtn) {
+        saveBtn.addEventListener('click', function() {
+            console.log('Save button clicked');
+            saveSettings();
+        });
+    } else {
+        console.error('Save button not found');
+    }
+});
+
 function toggleQuestionOptions(questionId) {
     console.log('Toggling options for question:', questionId);
     const optionsDiv = document.getElementById('question-options-' + questionId);
     if (optionsDiv) {
         if (optionsDiv.style.display === 'none' || optionsDiv.style.display === '') {
             optionsDiv.style.display = 'block';
+            console.log('Showed options for question:', questionId);
         } else {
             optionsDiv.style.display = 'none';
+            console.log('Hidden options for question:', questionId);
         }
     } else {
         console.error('Could not find element with ID: question-options-' + questionId);
@@ -305,7 +331,7 @@ function saveSettings() {
     console.log('Save settings function called');
     
     // Show loading state
-    const saveButton = document.querySelector('button[onclick="saveSettings()"]');
+    const saveButton = document.getElementById('save-settings-btn');
     if (saveButton) {
         saveButton.disabled = true;
         saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
@@ -313,16 +339,29 @@ function saveSettings() {
     
     const formData = new FormData();
     
-    // Collect all form inputs by their name attribute
-    const inputs = document.querySelectorAll('input[name], textarea[name]');
-    console.log('Found inputs:', inputs.length);
+    // Collect all form inputs with the settings-input class and name attribute
+    const inputs = document.querySelectorAll('.settings-input[name]');
+    console.log('Found settings inputs:', inputs.length);
     
     inputs.forEach((input, index) => {
-        if (input.name) {
+        if (input.name && input.name.trim() !== '') {
             formData.append(input.name, input.value);
             console.log(`Input ${index}: ${input.name} = ${input.value}`);
         }
     });
+    
+    // Also collect textarea inputs
+    const textareas = document.querySelectorAll('textarea[name]');
+    console.log('Found textareas:', textareas.length);
+    
+    textareas.forEach((textarea, index) => {
+        if (textarea.name && textarea.name.trim() !== '') {
+            formData.append(textarea.name, textarea.value);
+            console.log(`Textarea ${index}: ${textarea.name} = ${textarea.value}`);
+        }
+    });
+    
+    console.log('Sending request to api/save_settings.php');
     
     fetch('api/save_settings.php', {
         method: 'POST',
@@ -330,19 +369,28 @@ function saveSettings() {
     })
     .then(response => {
         console.log('Response status:', response.status);
-        return response.json();
+        console.log('Response headers:', response.headers);
+        return response.text().then(text => {
+            console.log('Raw response:', text);
+            try {
+                return JSON.parse(text);
+            } catch (e) {
+                console.error('Failed to parse JSON:', e);
+                throw new Error('Invalid JSON response: ' + text);
+            }
+        });
     })
     .then(data => {
-        console.log('Response data:', data);
+        console.log('Parsed response data:', data);
         if (data.success) {
             showNotification('Settings saved successfully!', true);
         } else {
-            showNotification('Error saving settings: ' + data.message, false);
+            showNotification('Error saving settings: ' + (data.message || 'Unknown error'), false);
         }
     })
     .catch(error => {
-        console.error('Error:', error);
-        showNotification('Error saving settings', false);
+        console.error('Fetch error:', error);
+        showNotification('Error saving settings: ' + error.message, false);
     })
     .finally(() => {
         // Reset button state
