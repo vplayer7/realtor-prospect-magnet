@@ -99,7 +99,7 @@ try {
             <div class="quiz-question-item bg-white p-4 rounded border mb-4">
                 <div class="flex justify-between items-center mb-3">
                     <h5 class="font-medium">Question <?php echo $index + 1; ?></h5>
-                    <button type="button" onclick="toggleQuestionOptions(<?php echo $question['id']; ?>)" class="text-blue-600 hover:text-blue-800">
+                    <button type="button" onclick="toggleQuestionOptions(<?php echo $question['question_id']; ?>)" class="text-blue-600 hover:text-blue-800">
                         <i class="fas fa-cog"></i> Configure
                     </button>
                 </div>
@@ -119,7 +119,7 @@ try {
                     </div>
                 </div>
                 
-                <div id="question-options-<?php echo $question['id']; ?>" class="question-options" style="display: none;">
+                <div id="question-options-<?php echo $question['question_id']; ?>" class="question-options" style="display: none;">
                     <h6 class="font-medium mb-2">Answer Options</h6>
                     <?php
                     $stmt = $pdo->prepare("SELECT * FROM quiz_options WHERE question_id = ? AND is_active = 1 ORDER BY option_order");
@@ -263,18 +263,23 @@ try {
 </div>
 
 <!-- Success notification div -->
-<div id="notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden">
+<div id="notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50">
     <i class="fas fa-check-circle mr-2"></i>
     <span id="notification-message">Settings saved successfully!</span>
 </div>
 
 <script>
 function toggleQuestionOptions(questionId) {
+    console.log('Toggling options for question:', questionId);
     const optionsDiv = document.getElementById('question-options-' + questionId);
-    if (optionsDiv.style.display === 'none') {
-        optionsDiv.style.display = 'block';
+    if (optionsDiv) {
+        if (optionsDiv.style.display === 'none' || optionsDiv.style.display === '') {
+            optionsDiv.style.display = 'block';
+        } else {
+            optionsDiv.style.display = 'none';
+        }
     } else {
-        optionsDiv.style.display = 'none';
+        console.error('Could not find element with ID: question-options-' + questionId);
     }
 }
 
@@ -282,26 +287,40 @@ function showNotification(message, isSuccess = true) {
     const notification = document.getElementById('notification');
     const messageSpan = document.getElementById('notification-message');
     
-    messageSpan.textContent = message;
-    notification.className = isSuccess 
-        ? 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg'
-        : 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
-    
-    notification.classList.remove('hidden');
-    
-    setTimeout(() => {
-        notification.classList.add('hidden');
-    }, 3000);
+    if (notification && messageSpan) {
+        messageSpan.textContent = message;
+        notification.className = isSuccess 
+            ? 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50'
+            : 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+        
+        notification.classList.remove('hidden');
+        
+        setTimeout(() => {
+            notification.classList.add('hidden');
+        }, 3000);
+    }
 }
 
 function saveSettings() {
+    console.log('Save settings function called');
+    
+    // Show loading state
+    const saveButton = document.querySelector('button[onclick="saveSettings()"]');
+    if (saveButton) {
+        saveButton.disabled = true;
+        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
+    }
+    
     const formData = new FormData();
     
     // Collect all form inputs by their name attribute
     const inputs = document.querySelectorAll('input[name], textarea[name]');
-    inputs.forEach(input => {
+    console.log('Found inputs:', inputs.length);
+    
+    inputs.forEach((input, index) => {
         if (input.name) {
             formData.append(input.name, input.value);
+            console.log(`Input ${index}: ${input.name} = ${input.value}`);
         }
     });
     
@@ -309,8 +328,12 @@ function saveSettings() {
         method: 'POST',
         body: formData
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log('Response status:', response.status);
+        return response.json();
+    })
     .then(data => {
+        console.log('Response data:', data);
         if (data.success) {
             showNotification('Settings saved successfully!', true);
         } else {
@@ -320,6 +343,13 @@ function saveSettings() {
     .catch(error => {
         console.error('Error:', error);
         showNotification('Error saving settings', false);
+    })
+    .finally(() => {
+        // Reset button state
+        if (saveButton) {
+            saveButton.disabled = false;
+            saveButton.innerHTML = '<i class="fas fa-save mr-2"></i>Save Settings';
+        }
     });
 }
 </script>
