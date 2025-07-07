@@ -119,7 +119,7 @@ try {
                     </div>
                 </div>
                 
-                <div id="question-options-<?php echo $question['question_id']; ?>" class="question-options" style="display: none;">
+                <div id="question-options-<?php echo $question['question_id']; ?>" class="question-options hidden">
                     <h6 class="font-medium mb-2">Answer Options</h6>
                     <?php
                     $stmt = $pdo->prepare("SELECT * FROM quiz_options WHERE question_id = ? AND is_active = 1 ORDER BY option_order");
@@ -190,7 +190,7 @@ try {
 
     <!-- Step 4 Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibled mb-4">Step 4 - Results Page</h4>
+        <h4 class="text-lg font-semibold mb-4">Step 4 - Results Page</h4>
         <div class="space-y-6">
             <?php 
             foreach ($settings as $setting): 
@@ -268,23 +268,39 @@ try {
     <span id="notification-message">Settings saved successfully!</span>
 </div>
 
+<style>
+.hidden { 
+    display: none !important; 
+}
+.question-options {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+</style>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Settings page loaded');
+    console.log('Settings page loaded and DOM ready');
     
-    // Add event listeners for configure buttons
-    document.querySelectorAll('.configure-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() {
-            const questionId = this.getAttribute('data-question-id');
+    // Use event delegation for configure buttons to handle dynamically loaded content
+    document.body.addEventListener('click', function(e) {
+        if (e.target.closest('.configure-btn')) {
+            e.preventDefault();
+            const btn = e.target.closest('.configure-btn');
+            const questionId = btn.getAttribute('data-question-id');
             console.log('Configure button clicked for question:', questionId);
             toggleQuestionOptions(questionId);
-        });
+        }
     });
     
     // Add event listener for save button
     const saveBtn = document.getElementById('save-settings-btn');
     if (saveBtn) {
-        saveBtn.addEventListener('click', function() {
+        saveBtn.addEventListener('click', function(e) {
+            e.preventDefault();
             console.log('Save button clicked');
             saveSettings();
         });
@@ -297,11 +313,11 @@ function toggleQuestionOptions(questionId) {
     console.log('Toggling options for question:', questionId);
     const optionsDiv = document.getElementById('question-options-' + questionId);
     if (optionsDiv) {
-        if (optionsDiv.style.display === 'none' || optionsDiv.style.display === '') {
-            optionsDiv.style.display = 'block';
+        if (optionsDiv.classList.contains('hidden')) {
+            optionsDiv.classList.remove('hidden');
             console.log('Showed options for question:', questionId);
         } else {
-            optionsDiv.style.display = 'none';
+            optionsDiv.classList.add('hidden');
             console.log('Hidden options for question:', questionId);
         }
     } else {
@@ -339,44 +355,33 @@ function saveSettings() {
     
     const formData = new FormData();
     
-    // Collect all form inputs with the settings-input class and name attribute
-    const inputs = document.querySelectorAll('.settings-input[name]');
-    console.log('Found settings inputs:', inputs.length);
+    // Collect ALL inputs, textareas, and selects
+    const allInputs = document.querySelectorAll('input, textarea, select');
+    console.log('Found total inputs:', allInputs.length);
     
-    inputs.forEach((input, index) => {
+    allInputs.forEach((input, index) => {
         if (input.name && input.name.trim() !== '') {
             formData.append(input.name, input.value);
             console.log(`Input ${index}: ${input.name} = ${input.value}`);
         }
     });
     
-    // Also collect textarea inputs
-    const textareas = document.querySelectorAll('textarea[name]');
-    console.log('Found textareas:', textareas.length);
+    console.log('Sending request to save_settings.php');
     
-    textareas.forEach((textarea, index) => {
-        if (textarea.name && textarea.name.trim() !== '') {
-            formData.append(textarea.name, textarea.value);
-            console.log(`Textarea ${index}: ${textarea.name} = ${textarea.value}`);
-        }
-    });
-    
-    console.log('Sending request to api/save_settings.php');
-    
+    // Use relative path that works from admin context
     fetch('api/save_settings.php', {
         method: 'POST',
         body: formData
     })
     .then(response => {
         console.log('Response status:', response.status);
-        console.log('Response headers:', response.headers);
         return response.text().then(text => {
             console.log('Raw response:', text);
             try {
                 return JSON.parse(text);
             } catch (e) {
                 console.error('Failed to parse JSON:', e);
-                throw new Error('Invalid JSON response: ' + text);
+                throw new Error('Invalid JSON response: ' + text.substring(0, 100) + '...');
             }
         });
     })
