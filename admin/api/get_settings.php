@@ -282,32 +282,28 @@ try {
 </style>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('Settings page loaded and DOM ready');
-    
-    // Use event delegation for configure buttons to handle dynamically loaded content
-    document.body.addEventListener('click', function(e) {
-        if (e.target.closest('.configure-btn')) {
-            e.preventDefault();
-            const btn = e.target.closest('.configure-btn');
-            const questionId = btn.getAttribute('data-question-id');
-            console.log('Configure button clicked for question:', questionId);
-            toggleQuestionOptions(questionId);
-        }
+console.log('Settings page loaded');
+
+// Add event listeners for configure buttons
+document.querySelectorAll('.configure-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+        const questionId = this.getAttribute('data-question-id');
+        console.log('Configure button clicked for question:', questionId);
+        toggleQuestionOptions(questionId);
     });
-    
-    // Add event listener for save button
-    const saveBtn = document.getElementById('save-settings-btn');
-    if (saveBtn) {
-        saveBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log('Save button clicked');
-            saveSettings();
-        });
-    } else {
-        console.error('Save button not found');
-    }
 });
+
+// Add event listener for save button
+const saveBtn = document.getElementById('save-settings-btn');
+if (saveBtn) {
+    saveBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        console.log('Save button clicked');
+        saveSettings();
+    });
+} else {
+    console.error('Save button not found');
+}
 
 function toggleQuestionOptions(questionId) {
     console.log('Toggling options for question:', questionId);
@@ -343,6 +339,31 @@ function showNotification(message, isSuccess = true) {
     }
 }
 
+function handleResponse(response) {
+    console.log('Response status:', response.status);
+    return response.text().then(text => {
+        console.log('Raw response:', text);
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Failed to parse JSON:', e);
+            throw new Error('Invalid JSON response: ' + text.substring(0, 100) + '...');
+        }
+    }).then(data => {
+        console.log('Parsed response data:', data);
+        if (data.success) {
+            showNotification('Settings saved successfully!', true);
+        } else {
+            showNotification('Error saving settings: ' + (data.message || 'Unknown error'), false);
+        }
+    });
+}
+
+function handleError(error) {
+    console.error('Fetch error:', error);
+    showNotification('Error saving settings: ' + error.message, false);
+}
+
 function saveSettings() {
     console.log('Save settings function called');
     
@@ -368,35 +389,13 @@ function saveSettings() {
     
     console.log('Sending request to save_settings.php');
     
-    // Use relative path that works from admin context
-    fetch('api/save_settings.php', {
+    // Use absolute path for API call
+    fetch('/admin/api/save_settings.php', {
         method: 'POST',
         body: formData
     })
-    .then(response => {
-        console.log('Response status:', response.status);
-        return response.text().then(text => {
-            console.log('Raw response:', text);
-            try {
-                return JSON.parse(text);
-            } catch (e) {
-                console.error('Failed to parse JSON:', e);
-                throw new Error('Invalid JSON response: ' + text.substring(0, 100) + '...');
-            }
-        });
-    })
-    .then(data => {
-        console.log('Parsed response data:', data);
-        if (data.success) {
-            showNotification('Settings saved successfully!', true);
-        } else {
-            showNotification('Error saving settings: ' + (data.message || 'Unknown error'), false);
-        }
-    })
-    .catch(error => {
-        console.error('Fetch error:', error);
-        showNotification('Error saving settings: ' + error.message, false);
-    })
+    .then(handleResponse)
+    .catch(handleError)
     .finally(() => {
         // Reset button state
         if (saveButton) {

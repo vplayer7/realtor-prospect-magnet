@@ -29,44 +29,35 @@ try {
         }
     }
     
-    // Update quiz questions
-    $stmt = $pdo->query("SELECT question_id FROM quiz_questions WHERE is_active = 1");
-    $question_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    
-    foreach ($question_ids as $question_id) {
-        $title_key = "question_title_" . $question_id;
-        $icon_key = "question_icon_" . $question_id;
-        
-        if (isset($_POST[$title_key])) {
+    // Process all POST data for quiz questions and options
+    foreach ($_POST as $key => $value) {
+        // Update quiz questions
+        if (strpos($key, 'question_title_') === 0) {
+            $question_id = str_replace('question_title_', '', $key);
             $stmt = $pdo->prepare("UPDATE quiz_questions SET title = ?, updated_at = NOW() WHERE question_id = ?");
-            $stmt->execute([sanitizeInput($_POST[$title_key]), $question_id]);
+            $stmt->execute([sanitizeInput($value), $question_id]);
             $updated_count++;
         }
         
-        if (isset($_POST[$icon_key])) {
+        if (strpos($key, 'question_icon_') === 0) {
+            $question_id = str_replace('question_icon_', '', $key);
             $stmt = $pdo->prepare("UPDATE quiz_questions SET icon = ?, updated_at = NOW() WHERE question_id = ?");
-            $stmt->execute([sanitizeInput($_POST[$icon_key]), $question_id]);
+            $stmt->execute([sanitizeInput($value), $question_id]);
             $updated_count++;
         }
-    }
-    
-    // Update quiz options
-    $stmt = $pdo->query("SELECT id FROM quiz_options WHERE is_active = 1");
-    $option_ids = $stmt->fetchAll(PDO::FETCH_COLUMN);
-    
-    foreach ($option_ids as $option_id) {
-        $value_key = "option_value_" . $option_id;
-        $label_key = "option_label_" . $option_id;
         
-        if (isset($_POST[$value_key])) {
+        // Update quiz options
+        if (strpos($key, 'option_value_') === 0) {
+            $option_id = str_replace('option_value_', '', $key);
             $stmt = $pdo->prepare("UPDATE quiz_options SET option_value = ? WHERE id = ?");
-            $stmt->execute([sanitizeInput($_POST[$value_key]), $option_id]);
+            $stmt->execute([sanitizeInput($value), $option_id]);
             $updated_count++;
         }
         
-        if (isset($_POST[$label_key])) {
+        if (strpos($key, 'option_label_') === 0) {
+            $option_id = str_replace('option_label_', '', $key);
             $stmt = $pdo->prepare("UPDATE quiz_options SET option_label = ? WHERE id = ?");
-            $stmt->execute([sanitizeInput($_POST[$label_key]), $option_id]);
+            $stmt->execute([sanitizeInput($value), $option_id]);
             $updated_count++;
         }
     }
