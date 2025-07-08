@@ -273,6 +273,7 @@ try {
     display: none !important; 
 }
 .question-options {
+    display: block !important; /* Remove hidden state */
     margin-top: 15px;
     padding: 15px;
     background: #f9fafb;
