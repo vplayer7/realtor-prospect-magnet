@@ -387,10 +387,16 @@ function saveSettings() {
         }
     });
     
+    // Add quiz options to form data
+    const optionInputs = document.querySelectorAll('input[name^="option_"]');
+    optionInputs.forEach(input => {
+        formData.append(input.name, input.value);
+    });
+    
     console.log('Sending request to save_settings.php');
     
-    // Use absolute path for API call
-    fetch('/admin/api/save_settings.php', {
+    // Fix API path
+    fetch('../api/save_settings.php', {
         method: 'POST',
         body: formData
     })
