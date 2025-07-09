@@ -28,7 +28,12 @@ try {
 <div class="space-y-8">
     <!-- General Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">General Settings</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Funnel Configuration</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="general">
+                <i class="fas fa-save mr-2"></i>Save Funnel Config
+            </button>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <?php 
             $generalSettings = ['google_maps_api_key', 'admin_email', 'company_name'];
@@ -42,7 +47,8 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       data-section="general">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -50,7 +56,12 @@ try {
 
     <!-- Page Content Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Page Content</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Page Content</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="content">
+                <i class="fas fa-save mr-2"></i>Save Page Content
+            </button>
+        </div>
         <div class="space-y-6">
             <?php 
             $contentSettings = ['site_title', 'site_subtitle', 'background_image'];
@@ -64,7 +75,8 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <input type="url" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       data-section="content">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -72,7 +84,12 @@ try {
 
     <!-- Step 1 Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Step 1 - Address Search</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Step 1 - Address Search</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="step1">
+                <i class="fas fa-save mr-2"></i>Save Address Search
+            </button>
+        </div>
         <div class="space-y-6">
             <?php 
             foreach ($settings as $setting): 
@@ -85,7 +102,8 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       data-section="step1">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -93,7 +111,12 @@ try {
 
     <!-- Quiz Questions -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Quiz Questions</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Quiz Questions</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="quiz">
+                <i class="fas fa-save mr-2"></i>Save Quiz Questions
+            </button>
+        </div>
         <div id="quiz-questions">
             <?php foreach ($questions as $index => $question): ?>
             <div class="quiz-question-item bg-white p-4 rounded border mb-4">
@@ -109,13 +132,15 @@ try {
                         <label class="block text-sm font-medium text-gray-700 mb-1">Question Text</label>
                         <input type="text" name="question_title_<?php echo $question['question_id']; ?>" 
                                value="<?php echo htmlspecialchars($question['title']); ?>"
-                               class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               data-section="quiz">
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Icon Class</label>
                         <input type="text" name="question_icon_<?php echo $question['question_id']; ?>" 
                                value="<?php echo htmlspecialchars($question['icon']); ?>"
-                               class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               data-section="quiz">
                     </div>
                 </div>
                 
@@ -130,10 +155,12 @@ try {
                     <div class="flex gap-2 mb-2">
                         <input type="text" name="option_value_<?php echo $option['id']; ?>" 
                                value="<?php echo htmlspecialchars($option['option_value']); ?>"
-                               placeholder="Value" class="settings-input flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               placeholder="Value" class="settings-input flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               data-section="quiz">
                         <input type="text" name="option_label_<?php echo $option['id']; ?>" 
                                value="<?php echo htmlspecialchars($option['option_label']); ?>"
-                               placeholder="Label" class="settings-input flex-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                               placeholder="Label" class="settings-input flex-2 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                               data-section="quiz">
                     </div>
                     <?php endforeach; ?>
                 </div>
@@ -144,7 +171,12 @@ try {
 
     <!-- Step 2 Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Step 2 - Quiz Navigation</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Quiz Navigation</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="step2">
+                <i class="fas fa-save mr-2"></i>Save Quiz Navigation
+            </button>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
             <?php 
             foreach ($settings as $setting): 
@@ -156,7 +188,8 @@ try {
                 </label>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       data-section="step2">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -164,7 +197,12 @@ try {
 
     <!-- Step 3 Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Step 3 - Lead Capture Form</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Lead Capture Form</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="step3">
+                <i class="fas fa-save mr-2"></i>Save Lead Capture Form
+            </button>
+        </div>
         <div class="space-y-6">
             <?php 
             foreach ($settings as $setting): 
@@ -177,11 +215,13 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <?php if (in_array($setting['setting_key'], ['privacy_text'])): ?>
                 <textarea id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" rows="3" 
-                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
+                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          data-section="step3"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
                 <?php else: ?>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       data-section="step3">
                 <?php endif; ?>
             </div>
             <?php endif; endforeach; ?>
@@ -190,7 +230,12 @@ try {
 
     <!-- Step 4 Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Step 4 - Results Page</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Results Page</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="step4">
+                <i class="fas fa-save mr-2"></i>Save Results Page
+            </button>
+        </div>
         <div class="space-y-6">
             <?php 
             foreach ($settings as $setting): 
@@ -202,7 +247,8 @@ try {
                 </label>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       data-section="step4">
             </div>
             <?php endif; endforeach; ?>
         </div>
@@ -210,7 +256,12 @@ try {
 
     <!-- Success Modal Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Success Modal</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Success Modal</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="success">
+                <i class="fas fa-save mr-2"></i>Save Success Modal
+            </button>
+        </div>
         <div class="space-y-6">
             <?php 
             foreach ($settings as $setting): 
@@ -223,11 +274,13 @@ try {
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <?php if (in_array($setting['setting_key'], ['success_message'])): ?>
                 <textarea id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" rows="2" 
-                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
+                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          data-section="success"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
                 <?php else: ?>
                 <input type="text" id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" 
                        value="<?php echo htmlspecialchars($setting['setting_value']); ?>"
-                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                       class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                       data-section="success">
                 <?php endif; ?>
             </div>
             <?php endif; endforeach; ?>
@@ -236,7 +289,12 @@ try {
 
     <!-- Legacy Settings -->
     <div class="bg-gray-50 p-4 rounded-lg">
-        <h4 class="text-lg font-semibold mb-4">Legacy Settings</h4>
+        <div class="flex justify-between items-center mb-4">
+            <h4 class="text-lg font-semibold">Legacy Settings</h4>
+            <button type="button" class="save-section-btn bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" data-section="legacy">
+                <i class="fas fa-save mr-2"></i>Save Legacy Settings
+            </button>
+        </div>
         <div class="space-y-6">
             <?php 
             $legacySettings = ['privacy_text'];
@@ -249,16 +307,11 @@ try {
                 </label>
                 <p class="text-sm text-gray-500 mb-2"><?php echo htmlspecialchars($setting['description']); ?></p>
                 <textarea id="<?php echo $setting['setting_key']; ?>" name="<?php echo $setting['setting_key']; ?>" rows="3" 
-                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
+                          class="settings-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          data-section="legacy"><?php echo htmlspecialchars($setting['setting_value']); ?></textarea>
             </div>
             <?php endif; endforeach; ?>
         </div>
-    </div>
-    
-    <div class="pt-4">
-        <button type="button" id="save-settings-btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-            <i class="fas fa-save mr-2"></i>Save Settings
-        </button>
     </div>
 </div>
 
@@ -294,17 +347,15 @@ document.querySelectorAll('.configure-btn').forEach(function(btn) {
     });
 });
 
-// Add event listener for save button
-const saveBtn = document.getElementById('save-settings-btn');
-if (saveBtn) {
-    saveBtn.addEventListener('click', function(e) {
+// Add event listeners for section save buttons
+document.querySelectorAll('.save-section-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
         e.preventDefault();
-        console.log('Save button clicked');
-        saveSettings();
+        const section = this.getAttribute('data-section');
+        console.log('Save section button clicked for:', section);
+        saveSectionSettings(section, this);
     });
-} else {
-    console.error('Save button not found');
-}
+});
 
 function toggleQuestionOptions(questionId) {
     console.log('Toggling options for question:', questionId);
@@ -365,39 +416,33 @@ function handleError(error) {
     showNotification('Error saving settings: ' + error.message, false);
 }
 
-function saveSettings() {
-    console.log('Save settings function called');
+function saveSectionSettings(section, buttonElement) {
+    console.log('Save section settings function called for:', section);
     
-    // Show loading state
-    const saveButton = document.getElementById('save-settings-btn');
-    if (saveButton) {
-        saveButton.disabled = true;
-        saveButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
-    }
+    // Show loading state for this specific button
+    const originalText = buttonElement.innerHTML;
+    buttonElement.disabled = true;
+    buttonElement.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Saving...';
     
     const formData = new FormData();
     
-    // Collect ALL inputs, textareas, and selects
-    const allInputs = document.querySelectorAll('input, textarea, select');
-    console.log('Found total inputs:', allInputs.length);
+    // Collect inputs for this specific section
+    const sectionInputs = document.querySelectorAll(`[data-section="${section}"]`);
+    console.log(`Found ${sectionInputs.length} inputs for section:`, section);
     
-    allInputs.forEach((input, index) => {
+    sectionInputs.forEach((input, index) => {
         if (input.name && input.name.trim() !== '') {
             formData.append(input.name, input.value);
-            console.log(`Input ${index}: ${input.name} = ${input.value}`);
+            console.log(`Section ${section} Input ${index}: ${input.name} = ${input.value}`);
         }
     });
     
-    // Add quiz options to form data
-    const optionInputs = document.querySelectorAll('input[name^="option_"]');
-    optionInputs.forEach(input => {
-        formData.append(input.name, input.value);
-    });
+    // Add section identifier
+    formData.append('section', section);
     
-    console.log('Sending request to save_settings.php');
+    console.log('Sending request to save_settings.php for section:', section);
     
-    // Fix API path
-    fetch('../api/save_settings.php', {
+    fetch('save_settings.php', {
         method: 'POST',
         body: formData
     })
@@ -405,10 +450,8 @@ function saveSettings() {
     .catch(handleError)
     .finally(() => {
         // Reset button state
-        if (saveButton) {
-            saveButton.disabled = false;
-            saveButton.innerHTML = '<i class="fas fa-save mr-2"></i>Save Settings';
-        }
+        buttonElement.disabled = false;
+        buttonElement.innerHTML = originalText;
     });
 }
 </script>
