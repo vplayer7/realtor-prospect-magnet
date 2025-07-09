@@ -315,10 +315,17 @@ try {
     </div>
 </div>
 
-<!-- Success notification div -->
-<div id="notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg hidden z-50">
-    <i class="fas fa-check-circle mr-2"></i>
-    <span id="notification-message">Settings saved successfully!</span>
+<!-- Enhanced notification div with progress bar -->
+<div id="notification" class="fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl hidden z-50 max-w-md">
+    <div class="flex items-center">
+        <i id="notification-icon" class="fas fa-check-circle mr-3"></i>
+        <div class="flex-1">
+            <div id="notification-message" class="font-medium">Settings saved successfully!</div>
+            <div id="notification-progress" class="w-full bg-white/20 rounded-full h-1 mt-2">
+                <div id="notification-progress-bar" class="bg-white h-1 rounded-full transition-all duration-3000 ease-linear w-full"></div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -376,18 +383,36 @@ function toggleQuestionOptions(questionId) {
 function showNotification(message, isSuccess = true) {
     const notification = document.getElementById('notification');
     const messageSpan = document.getElementById('notification-message');
+    const icon = document.getElementById('notification-icon');
+    const progressBar = document.getElementById('notification-progress-bar');
     
     if (notification && messageSpan) {
         messageSpan.textContent = message;
-        notification.className = isSuccess 
-            ? 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50'
-            : 'fixed top-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
         
+        // Update icon and styling based on success/error
+        if (isSuccess) {
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 max-w-md';
+            icon.className = 'fas fa-check-circle mr-3';
+        } else {
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 max-w-md';
+            icon.className = 'fas fa-exclamation-triangle mr-3';
+        }
+        
+        // Show notification
         notification.classList.remove('hidden');
         
+        // Reset and animate progress bar
+        if (progressBar) {
+            progressBar.style.width = '0%';
+            setTimeout(() => {
+                progressBar.style.width = '100%';
+            }, 100);
+        }
+        
+        // Hide after 4 seconds
         setTimeout(() => {
             notification.classList.add('hidden');
-        }, 3000);
+        }, 4000);
     }
 }
 
@@ -399,21 +424,22 @@ function handleResponse(response) {
             return JSON.parse(text);
         } catch (e) {
             console.error('Failed to parse JSON:', e);
-            throw new Error('Invalid JSON response: ' + text.substring(0, 100) + '...');
+            throw new Error('Server error: ' + text.substring(0, 200));
         }
     }).then(data => {
         console.log('Parsed response data:', data);
         if (data.success) {
-            showNotification('Settings saved successfully!', true);
+            showNotification('Settings saved successfully! Updated ' + (data.updated_count || 0) + ' fields.', true);
         } else {
-            showNotification('Error saving settings: ' + (data.message || 'Unknown error'), false);
+            showNotification('Error: ' + (data.message || 'Unknown error'), false);
         }
+        return data;
     });
 }
 
 function handleError(error) {
     console.error('Fetch error:', error);
-    showNotification('Error saving settings: ' + error.message, false);
+    showNotification('Network error: ' + error.message, false);
 }
 
 function saveSectionSettings(section, buttonElement) {

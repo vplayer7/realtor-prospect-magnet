@@ -4,6 +4,13 @@ session_start();
 require_once '../../config.php';
 
 header('Content-Type: application/json');
+header('Access-Control-Allow-Origin: *');
+header('Access-Control-Allow-Methods: POST');
+header('Access-Control-Allow-Headers: Content-Type');
+
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== true) {
     http_response_code(403);
@@ -13,6 +20,12 @@ if (!isset($_SESSION['admin_logged_in']) || $_SESSION['admin_logged_in'] !== tru
 
 try {
     $pdo = getDBConnection();
+    
+    // Test database connection
+    $pdo->query("SELECT 1");
+    
+    // Log the POST data for debugging
+    error_log("POST data: " . json_encode($_POST));
     
     // Get all settings keys
     $stmt = $pdo->query("SELECT setting_key FROM settings");
