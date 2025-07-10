@@ -391,27 +391,36 @@ function showNotification(message, isSuccess = true) {
         
         // Update icon and styling based on success/error
         if (isSuccess) {
-            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 max-w-md';
+            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 max-w-md transform transition-all duration-300';
             icon.className = 'fas fa-check-circle mr-3';
         } else {
-            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 max-w-md';
+            notification.className = 'fixed top-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-2xl z-50 max-w-md transform transition-all duration-300';
             icon.className = 'fas fa-exclamation-triangle mr-3';
         }
         
-        // Show notification
+        // Show notification with animation
         notification.classList.remove('hidden');
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => {
+            notification.style.transform = 'translateX(0)';
+        }, 10);
         
         // Reset and animate progress bar
         if (progressBar) {
             progressBar.style.width = '0%';
+            progressBar.style.transition = 'width 4s linear';
             setTimeout(() => {
                 progressBar.style.width = '100%';
             }, 100);
         }
         
-        // Hide after 4 seconds
+        // Hide after 4 seconds with animation
         setTimeout(() => {
-            notification.classList.add('hidden');
+            notification.style.transform = 'translateX(100%)';
+            setTimeout(() => {
+                notification.classList.add('hidden');
+                notification.style.transform = 'translateX(0)';
+            }, 300);
         }, 4000);
     }
 }

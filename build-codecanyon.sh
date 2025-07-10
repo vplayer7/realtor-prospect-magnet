@@ -17,22 +17,39 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
-# Create build directory and copy frontend files
+# Create build directory and copy files
 mkdir -p codecanyon-build
 cd codecanyon-build
 
-echo "📂 Copying frontend files..."
-cp -r ../dist/* .
+echo "📂 Copying PHP files..."
+# Copy PHP files directly (not from dist)
+cp ../index.php .
+cp ../get_content.php .
+cp ../submit.php .
+cp ../styles.css .
+cp ../script.js .
 
-# Verify files were copied
-if [ ! -f "index.html" ]; then
-    echo "❌ Frontend files not copied properly"
-    echo "Contents of dist directory:"
-    ls -la ../dist/
+# Copy React build files if they exist
+if [ -d "../dist" ]; then
+    echo "📂 Copying React build assets..."
+    # Only copy assets directory from React build
+    if [ -d "../dist/assets" ]; then
+        cp -r ../dist/assets .
+    fi
+    
+    # Copy any other static files from dist (excluding index.html since we use index.php)
+    find ../dist -maxdepth 1 -type f ! -name "index.html" -exec cp {} . \;
+fi
+
+# Verify main files were copied
+if [ ! -f "index.php" ]; then
+    echo "❌ PHP files not copied properly"
+    echo "Current directory contents:"
+    ls -la
     exit 1
 fi
 
-echo "✅ Frontend files copied successfully"
+echo "✅ PHP and static files copied successfully"
 
 # Copy installation files
 echo "📂 Copying installation files..."
